@@ -88,15 +88,15 @@ public OnRuntimeError(code, &bool:suppress)
 {
 #if defined PPTB_OnRuntimeError
     new ret = PPTB_OnRuntimeError(code, suppress);
-#else
-    new ret = 1;
-#endif
 
     if (suppress)
     {
         PPBind_g_sSuppressed = false;
         return ret;
     }
+#else
+    new ret = 1;
+#endif
 
     supress = PPBind_g_sSuppressed;
     PPBind_g_sSuppressed = false;
