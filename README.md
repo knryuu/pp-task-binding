@@ -16,6 +16,20 @@ forward Task:task_bind_player(playerid, Task:currentTask);
 ```
 
 # Usage
+If `PP_SYNTAX` or `PP_SYNTAX_AWAIT` is defined, await syntax can be used:
+```c
+await bind_to(playerid) mysql_aquery(myHandle, str_format("SELECT ..."));
+```
+or
 ```c
 await task_bind_player(playerid, mysql_aquery(myHandle, str_format("SELECT ...")));
+```
+
+**If not using await syntax**
+```c
+task_await(bind_to(playerid) mysql_aquery(myHandle, str_format("SELECT ...")));
+```
+or
+```c
+task_await(task_bind_player(playerid, mysql_aquery(myHandle, str_format("SELECT ..."))));
 ```

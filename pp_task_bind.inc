@@ -38,6 +38,10 @@
     #error You need to include PawnPlus.inc before this.
 #endif
 
+#if defined PP_SYNTAX_AWAIT
+    #define bind_to(%0)%1; task_bind_player(%0, %1);
+#endif
+
 static
     bool:PPBind_g_sSuppressed = false;
 
