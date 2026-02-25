@@ -92,7 +92,13 @@ public OnRuntimeError(code, &bool:suppress)
     new ret = 1;
 #endif
 
-    suppress = PPBind_g_sSuppressed;
+    if (suppress)
+    {
+        PPBind_g_sSuppressed = false;
+        return ret;
+    }
+
+    supress = PPBind_g_sSuppressed;
     PPBind_g_sSuppressed = false;
     return ret;
 }
