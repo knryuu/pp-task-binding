@@ -1,6 +1,6 @@
 /* 
  * PawnPlus Task Binding
- * Version: 0.2
+ * Version: 1.0
  * Author: Kanaru Yuuki
  *
  * Description: 
@@ -89,26 +89,21 @@ public TaskBindTriggered(CallbackHandler:h, Task:t, holder, playerid, reason)
     return 0;
 }
 
-#if !defined CRASHDETECT_INC
-forward OnRuntimeError(code, &bool:suppress);
-#endif
 public OnRuntimeError(code, &bool:suppress)
 {
 #if defined PPTB_OnRuntimeError
-    new ret = PPTB_OnRuntimeError(code, suppress);
+    PPTB_OnRuntimeError(code, suppress);
 
     if (suppress)
     {
         PPBind_g_sSuppressed = false;
-        return ret;
+        return 1;
     }
-#else
-    new ret = 1;
 #endif
 
     suppress = PPBind_g_sSuppressed;
     PPBind_g_sSuppressed = false;
-    return ret;
+    return 1;
 }
 
 // Misc
@@ -121,6 +116,11 @@ public OnRuntimeError(code, &bool:suppress)
 
 #if defined PPTB_OnRuntimeError
     forward PPTB_OnRuntimeError(playerid);
+#endif
+
+// Forwards (it works, dw)
+#if !defined CRASHDETECT_INC
+forward OnRuntimeError(code, &bool:suppress);
 #endif
 
 forward TaskBindFinished(CallbackHandler:h);
