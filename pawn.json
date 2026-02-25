@@ -1,0 +1,12 @@
+{
+  "user": "knryuu",
+  "repo": "pp-task-binding",
+  "contributors": [
+		"knryuu",
+    "Leamir"
+  ]
+  "dependencies": [
+    "sampctl/samp-stdlib",
+    "IllidanS4/PawnPlus",
+  ]
+}
