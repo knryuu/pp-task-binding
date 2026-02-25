@@ -8,7 +8,8 @@
  *   For now it's only supporting player, next version will support custom callback instead of this.
  *
  * Contributors:
- *   Kanaru Yuuki 
+ *   Kanaru Yuuki
+ *   Leamir
  *
  * ----------------------------------------------------------------------------------
  * MIT License
