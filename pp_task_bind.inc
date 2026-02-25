@@ -84,6 +84,9 @@ public TaskBindTriggered(CallbackHandler:h, Task:t, holder, playerid, reason)
     return 0;
 }
 
+#if !defined CRASHDETECT_INC
+forward OnRuntimeError(code, &bool:suppress);
+#endif
 public OnRuntimeError(code, &bool:suppress)
 {
 #if defined PPTB_OnRuntimeError
@@ -98,7 +101,7 @@ public OnRuntimeError(code, &bool:suppress)
     new ret = 1;
 #endif
 
-    supress = PPBind_g_sSuppressed;
+    suppress = PPBind_g_sSuppressed;
     PPBind_g_sSuppressed = false;
     return ret;
 }
@@ -110,10 +113,6 @@ public OnRuntimeError(code, &bool:suppress)
     #define _ALS_OnRuntimeError
 #endif
 #define OnRuntimeError PPTB_OnRuntimeError
-
-#if !defined CRASHDETECT_INC
-forward OnRuntimeError(code, &bool:suppress)
-#endif
 
 #if defined PPTB_OnRuntimeError
     forward PPTB_OnRuntimeError(playerid);
