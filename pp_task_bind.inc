@@ -39,7 +39,7 @@
 #endif
 
 #if defined PP_SYNTAX_AWAIT
-    #define await_plr(%0)%1; task_await(task_bind_player(%0, %1));
+    #define bind_to(%0)%1; task_bind_player(%0, %1);
 #endif
 
 static
