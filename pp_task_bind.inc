@@ -1,6 +1,6 @@
 /* 
  * PawnPlus Task Binding
- * Version: 0.1
+ * Version: 0.2
  * Author: Kanaru Yuuki
  *
  * Description: 
@@ -38,13 +38,10 @@
     #error You need to include PawnPlus.inc before this.
 #endif
 
-#tryinclude <crashdetect>
+static
+    bool:PPBind_g_sSuppressed = false;
 
-#if defined CRASHDETECT_INC
-    static
-        PPBind_IsTriggered = false;
-#endif
-
+// Main function
 stock Task:task_bind_player(playerid, Task:currentTask)
 {
     if (!task_valid(currentTask))
@@ -54,26 +51,23 @@ stock Task:task_bind_player(playerid, Task:currentTask)
 
     if (!IsPlayerConnected(playerid))
     {
-#if defined CRASHDETECT_INC
-        PPBind_IsTriggered = true;
-#endif
+        PPBind_g_sSuppressed = true;
         task_set_error_ms(currentTask, amx_err_exit, 0);
         return currentTask;
     }
 
     new CallbackHandler:onError = pawn_register_callback("OnPlayerDisconnect", "TaskBindTriggered", _, "edd", currentTask, playerid);
-    task_continue_with(currentTask, "TaskBindFinished", "i", onError);
+    task_continue_with(currentTask, "TaskBindFinished", "i", _:onError);
     return currentTask;
 }
 
-forward TaskBindFinished(CallbackHandler:h);
+// Handlers
 public TaskBindFinished(CallbackHandler:h)
 {
     pawn_unregister_callback(h);
     return 0;
 }
 
-forward TaskBindTriggered(CallbackHandler:h, Task:t, holder, playerid, reason);
 public TaskBindTriggered(CallbackHandler:h, Task:t, holder, playerid, reason)
 {
     if (holder == playerid)
@@ -82,9 +76,7 @@ public TaskBindTriggered(CallbackHandler:h, Task:t, holder, playerid, reason)
         if (!task_valid(t)) return 0;
         if (task_completed(t)) return 0;
 
-#if defined CRASHDETECT_INC
-        PPBind_IsTriggered = true;
-#endif
+        PPBind_g_sSuppressed = true;
 
         if (task_state(t) == task_state_faulted) return 0;
         task_set_error_ms(t, amx_err_exit, 0);
@@ -92,14 +84,34 @@ public TaskBindTriggered(CallbackHandler:h, Task:t, holder, playerid, reason)
     return 0;
 }
 
-#if defined CRASHDETECT_INC
 public OnRuntimeError(code, &bool:suppress)
 {
-    if (PPBind_IsTriggered)
-    {
-        suppress = true;
-        PPBind_IsTriggered = false;
-    }
-    return 1;
-}
+#if defined PPTB_OnRuntimeError
+    new ret = PPTB_OnRuntimeError(code, suppress);
+#else
+    new ret = 1;
 #endif
+
+    suppress = PPBind_g_sSuppressed;
+    PPBind_g_sSuppressed = false;
+    return ret;
+}
+
+// Misc
+#if defined _ALS_OnRuntimeError
+    #undef OnRuntimeError
+#else
+    #define _ALS_OnRuntimeError
+#endif
+#define OnRuntimeError PPTB_OnRuntimeError
+
+#if !defined CRASHDETECT_INC
+forward OnRuntimeError(code, &bool:suppress)
+#endif
+
+#if defined PPTB_OnRuntimeError
+    forward PPTB_OnRuntimeError(playerid);
+#endif
+
+forward TaskBindFinished(CallbackHandler:h);
+forward TaskBindTriggered(CallbackHandler:h, Task:t, holder, playerid, reason);
